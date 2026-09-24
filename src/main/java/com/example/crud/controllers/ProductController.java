@@ -4,6 +4,7 @@ import com.example.crud.domain.product.Product;
 import com.example.crud.domain.product.ProductNotFoundException;
 import com.example.crud.domain.product.ProductRepository;
 import com.example.crud.domain.product.RequestProduct;
+import com.example.crud.services.ViaCepService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,9 @@ public class ProductController {
 
     @Autowired
     private ProductRepository repository;
+
+    @Autowired
+    private ViaCepService viaCepService;
 
     @PostMapping
     public ResponseEntity<Void> registerProduct(@RequestBody @Valid RequestProduct data) {
@@ -62,6 +66,7 @@ public class ProductController {
         product.setName(data.name());
         product.setPrice(data.price());
         product.setCategory(data.category());
+        product.setDistributionCenter(data.distributionCenter());
         repository.save(product);
 
         return ResponseEntity.ok(product);
@@ -89,5 +94,18 @@ public class ProductController {
     public ResponseEntity<List<Product>> getTopFiveProductsByPrice() {
         List<Product> products = repository.findTop5ByActiveTrueOrderByPriceDesc();
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/{id}/availability")
+    public ResponseEntity<Boolean> checkAvailability(
+            @PathVariable String id,
+            @RequestParam String cep) {
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        String city = viaCepService.findCityByCep(cep);
+        boolean available = product.getDistributionCenter().trim().equalsIgnoreCase(city.trim());
+
+        return ResponseEntity.ok(available);
     }
 }

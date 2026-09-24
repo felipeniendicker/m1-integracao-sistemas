@@ -1,6 +1,7 @@
 package com.example.crud.domain.product;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +25,9 @@ public class Product {
 
     private String category;
 
+    @Column(name = "distribution_center", nullable = false)
+    private String distributionCenter;
+
     public Product() {
     }
 
@@ -31,6 +35,7 @@ public class Product {
         this.name = requestProduct.name();
         this.price = requestProduct.price();
         this.category = requestProduct.category();
+        this.distributionCenter = requestProduct.distributionCenter();
         this.active = true;
     }
 
@@ -72,6 +77,14 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getDistributionCenter() {
+        return distributionCenter;
+    }
+
+    public void setDistributionCenter(String distributionCenter) {
+        this.distributionCenter = distributionCenter;
     }
 
     @Override
