@@ -13,6 +13,11 @@ public class ViaCepService {
 
     private final RestClient restClient = RestClient.create("https://viacep.com.br");
 
+    public boolean checkAvailability(String cep, String distributionCenter) {
+        String city = findCityByCep(cep);
+        return distributionCenter.trim().equalsIgnoreCase(city.trim());
+    }
+
     public String findCityByCep(String cep) {
         String normalizedCep = validateCep(cep);
         ViaCepResponse response;

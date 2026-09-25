@@ -103,8 +103,7 @@ public class ProductController {
         Product product = repository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
-        String city = viaCepService.findCityByCep(cep);
-        boolean available = product.getDistributionCenter().trim().equalsIgnoreCase(city.trim());
+        boolean available = viaCepService.checkAvailability(cep, product.getDistributionCenter());
 
         return ResponseEntity.ok(available);
     }
